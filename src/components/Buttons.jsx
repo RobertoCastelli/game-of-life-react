@@ -18,7 +18,7 @@ const Buttons = () => {
         <FaStop />
       </button>
       <button>
-        <GiConwayLifeGlider onClick={generateRandomCells} />
+        <GiConwayLifeGlider onClick={(e) => generateRandomCells(e)} />
       </button>
       <button>
         <HiX />
