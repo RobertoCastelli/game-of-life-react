@@ -7,7 +7,7 @@ import { DataContext } from "../context";
 
 const Buttons = () => {
   const context = useContext(DataContext);
-  const { generateRandomCells } = context;
+  const { generateRandomCells, clearAllCells } = context;
 
   return (
     <div className="buttons">
@@ -17,10 +17,10 @@ const Buttons = () => {
       <button>
         <FaStop />
       </button>
-      <button>
-        <GiConwayLifeGlider onClick={(e) => generateRandomCells(e)} />
+      <button onClick={generateRandomCells}>
+        <GiConwayLifeGlider />
       </button>
-      <button>
+      <button onClick={clearAllCells}>
         <HiX />
       </button>
       <button disabled className="counter">

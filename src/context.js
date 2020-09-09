@@ -3,18 +3,21 @@ import React, { useState } from "react";
 export const DataContext = React.createContext();
 
 const ContextProvider = (props) => {
-  //--> GENERATE A RANDOM GRID
-  const grid = Array.from({ length: 400 }, () => ({
+  //--> INITIAL GRID WITH RANDOM STATE
+  const initialGrid = Array.from({ length: 400 }, () => ({
     state: false,
   }));
 
-  const [cells, setCells] = useState(grid);
+  //--> STATES
+  const [cells, setCells] = useState(initialGrid);
 
-  //--> GENERATE A RANDOM GRID
-  const generateRandomCells = (e) => {
-    e.preventDefault();
+  //--> CLEAR GRID ON CLICK
+  const clearAllCells = () => setCells(initialGrid);
+
+  //--> GENERATE A RANDOM GRID ON CLICK
+  const generateRandomCells = () => {
     setCells(
-      grid.map(() => {
+      cells.map(() => {
         return {
           state: Math.random() < 0.5,
         };
@@ -22,8 +25,20 @@ const ContextProvider = (props) => {
     );
   };
 
+  //--> CHANGE SINGLE CELL STATE (DEAD/ALIVE)
+  const changeCellState = (index) => {
+    document.getElementById(index).setAttribute("state", true);
+  };
+
   return (
-    <DataContext.Provider value={{ cells, generateRandomCells }}>
+    <DataContext.Provider
+      value={{
+        cells,
+        generateRandomCells,
+        clearAllCells,
+        changeCellState,
+      }}
+    >
       {props.children}
     </DataContext.Provider>
   );
