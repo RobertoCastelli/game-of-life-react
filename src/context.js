@@ -13,8 +13,11 @@ const ContextProvider = (props) => {
   const [cellState, setCellState] = useState(false); // UPDATE BOOLEAN CELL STATE --> DEAD/ALIVE
   const [counter, setCounter] = useState(0); // UPDATE STEP GENERATION COUNTER
 
-  //--> CLEAR GRID
-  const clearAllGrid = () => setGrid(initialGrid);
+  //--> CLEAR GRID & COUNTER
+  const clearAllGrid = () => {
+    setGrid(initialGrid);
+    setCounter(0);
+  };
 
   //--> GENERATE A RANDOM GRID
   const generateRandomGrid = () => {
@@ -45,20 +48,23 @@ const ContextProvider = (props) => {
     grid.map((_, id) => {
       // INIT ALIVE NEIGHTBURS COUNT = 0
       let aliveNeighburs = 0;
-      id = 42; //FIXME:
+
       // COUNT ALIVE NEIGHTBORS
       // [ TL ][ TC ][ TR ]
       // [ CL ][ CC ][ CR ]
       // [ BL ][ BC ][ BR ]
-      grid[id - 1].state && (aliveNeighburs += 1);
-      grid[id + 1].state && (aliveNeighburs += 1);
-      grid[id - 21].state && (aliveNeighburs += 1);
-      grid[id - 20].state && (aliveNeighburs += 1);
-      grid[id - 19].state && (aliveNeighburs += 1);
-      grid[id + 19].state && (aliveNeighburs += 1);
-      grid[id + 20].state && (aliveNeighburs += 1);
-      grid[id + 21].state && (aliveNeighburs += 1);
-      console.log(aliveNeighburs);
+      if (id >= 21 && id <= 378) {
+        //FIXME: don't esclude top and bottom border
+        grid[id - 1].state && (aliveNeighburs += 1); // [CL]
+        grid[id + 1].state && (aliveNeighburs += 1); // [CR]
+        grid[id - 21].state && (aliveNeighburs += 1); // [TL]
+        grid[id - 20].state && (aliveNeighburs += 1); // [TC]
+        grid[id - 19].state && (aliveNeighburs += 1); // [TR]
+        grid[id + 19].state && (aliveNeighburs += 1); // [BL]
+        grid[id + 20].state && (aliveNeighburs += 1); // [BC]
+        grid[id + 21].state && (aliveNeighburs += 1); // [BR]
+        console.log(aliveNeighburs);
+      }
 
       // APPLIE CONWAY'RULES
       // 1. any live cell with two or three live neighbours survives. any dead cell
@@ -66,10 +72,12 @@ const ContextProvider = (props) => {
       // 3. in the next generation. similarly, all other dead cells stay dead.
       setCellState(aliveNeighburs === 3 && (grid[id].state = true));
       setCellState(
-        aliveNeighburs === 2 && grid[id].state && (grid[id].state = true)
+        grid[id].state && aliveNeighburs === 2 && (grid[id].state = true)
       );
       setCellState(
-        (aliveNeighburs < 2 || aliveNeighburs >= 4) && (grid[id].state = false)
+        grid[id].state &&
+          (aliveNeighburs < 2 || aliveNeighburs >= 4) &&
+          (grid[id].state = false)
       );
       // COUNTER +1 EVERY CICLE GENERATION
       setCounter(counter + 1);
