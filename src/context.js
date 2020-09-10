@@ -3,13 +3,14 @@ import React, { useState } from "react";
 export const DataContext = React.createContext();
 
 const ContextProvider = (props) => {
-  //--> INITIAL GRID WITH RANDOM STATE
+  //--> INITIAL GRID WITH STATE FALSE
   const initialGrid = Array.from({ length: 400 }, () => ({
     state: false,
   }));
 
   //--> STATES
   const [cells, setCells] = useState(initialGrid);
+  const [cellState, setCellState] = useState(false);
 
   //--> CLEAR GRID ON CLICK
   const clearAllCells = () => setCells(initialGrid);
@@ -25,9 +26,16 @@ const ContextProvider = (props) => {
     );
   };
 
-  //--> CHANGE SINGLE CELL STATE (DEAD/ALIVE)
-  const changeCellState = (index) => {
-    document.getElementById(index).setAttribute("state", true);
+  //--> TOGGLE SINGLE CELL STATE (DEAD/ALIVE)
+  const toggleCellState = (index) => {
+    setCellState(
+      cells.map((cell, id) => {
+        if (index === id) {
+          cell.state = !cell.state;
+        }
+        return cellState;
+      })
+    );
   };
 
   return (
@@ -36,7 +44,7 @@ const ContextProvider = (props) => {
         cells,
         generateRandomCells,
         clearAllCells,
-        changeCellState,
+        toggleCellState,
       }}
     >
       {props.children}

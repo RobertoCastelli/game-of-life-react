@@ -4,7 +4,7 @@ import { DataContext } from "../context";
 
 const Grid = () => {
   const context = useContext(DataContext);
-  const { cells, changeCellState } = context;
+  const { cells, toggleCellState } = context;
 
   return (
     <div className="grid">
@@ -15,7 +15,7 @@ const Grid = () => {
               id={id}
               key={id}
               className="grid-cell"
-              onClick={() => changeCellState(id)}
+              onClick={() => toggleCellState(id)}
               style={
                 cell.state
                   ? { backgroundColor: "cadetblue" }
