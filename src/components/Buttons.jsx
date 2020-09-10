@@ -7,24 +7,24 @@ import { DataContext } from "../context";
 
 const Buttons = () => {
   const context = useContext(DataContext);
-  const { generateRandomCells, clearAllCells } = context;
+  const { generateRandomGrid, clearAllGrid, nextGrid, counter } = context;
 
   return (
     <div className="buttons">
-      <button>
+      <button onClick={nextGrid}>
         <FaPlay />
       </button>
       <button>
         <FaStop />
       </button>
-      <button onClick={generateRandomCells}>
+      <button onClick={generateRandomGrid}>
         <GiConwayLifeGlider />
       </button>
-      <button onClick={clearAllCells}>
+      <button onClick={clearAllGrid}>
         <HiX />
       </button>
       <button disabled className="counter">
-        10
+        {counter}
       </button>
     </div>
   );

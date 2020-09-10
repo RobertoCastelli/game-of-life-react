@@ -72,6 +72,7 @@ button:active {
 }
 
 .grid-wrapper {
+  position: relative;
   outline: 2px ridge #5f9ea0;
   display: grid;
   grid-template-columns: repeat(20, 1fr);
