@@ -84,7 +84,7 @@ button:active {
 
 .grid-cell {
   border: 1px solid rgb(95, 158, 160, 0.5);
-  border-radius: 50%;
+  border-radius: 50%; /* <-- comment to make cirles cells*/
   transition: all 0.2s ease;
 }
 
@@ -103,4 +103,5 @@ button:active {
   background-color: white;
   color: cadetblue;
   cursor: default;
+  min-width: 50px;
 }
