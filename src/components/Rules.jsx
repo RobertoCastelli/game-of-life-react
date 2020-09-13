@@ -22,7 +22,8 @@ const Rules = () => {
           die
         </li>
         <li>
-          in the next generation. Similarly, all other dead cells stay dead.
+          All other live cells die in the next generation. Similarly, all other
+          dead cells stay dead
         </li>
       </ol>
     </div>

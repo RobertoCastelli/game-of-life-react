@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export const DataContext = React.createContext();
 
@@ -12,6 +12,7 @@ const ContextProvider = (props) => {
   const [grid, setGrid] = useState(initialGrid); // UPDATE GRID
   const [cellState, setCellState] = useState(false); // UPDATE BOOLEAN CELL STATE --> DEAD/ALIVE
   const [counter, setCounter] = useState(0); // UPDATE STEP GENERATION COUNTER
+  const [isRunning, setIsRunning] = useState(false);
 
   //--> CLEAR GRID & COUNTER
   const clearAllGrid = () => {
@@ -40,49 +41,54 @@ const ContextProvider = (props) => {
         return cellState;
       })
     );
-    console.log(index);
   };
 
   //--> GENERATE NEXT GENERATION WITH CONWAY'S RULES
   const nextGrid = () => {
-    grid.map((_, id) => {
-      // INIT ALIVE NEIGHTBURS COUNT = 0
-      let aliveNeighburs = 0;
+    setIsRunning(!isRunning);
 
-      // COUNT ALIVE NEIGHTBORS
-      // [ TL ][ TC ][ TR ]
-      // [ CL ][ CC ][ CR ]
-      // [ BL ][ BC ][ BR ]
-      if (id >= 21 && id <= 378) {
-        //FIXME: don't esclude top and bottom border
-        grid[id - 1].state && (aliveNeighburs += 1); // [CL]
-        grid[id + 1].state && (aliveNeighburs += 1); // [CR]
-        grid[id - 21].state && (aliveNeighburs += 1); // [TL]
-        grid[id - 20].state && (aliveNeighburs += 1); // [TC]
-        grid[id - 19].state && (aliveNeighburs += 1); // [TR]
-        grid[id + 19].state && (aliveNeighburs += 1); // [BL]
-        grid[id + 20].state && (aliveNeighburs += 1); // [BC]
-        grid[id + 21].state && (aliveNeighburs += 1); // [BR]
-        console.log(aliveNeighburs);
-      }
+    while (!isRunning) {
+      grid.map((cell, id) => {
+        // INIT ALIVE NEIGHTBURS COUNT = 0
+        let aliveNeighburs = 0;
+        // EXCLUDE BORDERS
+        if (id >= 21 && id <= 378) {
+          // COUNT ALIVE NEIGHTBORS
+          // [ ↖ ]  [ ↥ ]  [ ↗ ]
+          // [ ↤ ] [INDEX] [ ↦ ]
+          // [ ↙ ]  [ ↧ ]  [ ↘ ]
+          grid[id - 1].state && (aliveNeighburs += 1); //  [ ↤ ]
+          grid[id + 1].state && (aliveNeighburs += 1); //  [ ↦ ]
+          grid[id - 21].state && (aliveNeighburs += 1); // [ ↖ ]
+          grid[id - 19].state && (aliveNeighburs += 1); // [ ↗ ]
+          grid[id - 20].state && (aliveNeighburs += 1); // [ ↥ ]
+          grid[id + 20].state && (aliveNeighburs += 1); // [ ↧ ]
+          grid[id + 19].state && (aliveNeighburs += 1); // [ ↙ ]
+          grid[id + 21].state && (aliveNeighburs += 1); // [ ↘ ]
+        }
 
-      // APPLIE CONWAY'RULES
-      // 1. any live cell with two or three live neighbours survives. any dead cell
-      // 2. with three live neighbours becomes a live cell. all other live cells die
-      // 3. in the next generation. similarly, all other dead cells stay dead.
-      setCellState(aliveNeighburs === 3 && (grid[id].state = true));
-      setCellState(
-        grid[id].state && aliveNeighburs === 2 && (grid[id].state = true)
-      );
-      setCellState(
-        grid[id].state &&
-          (aliveNeighburs < 2 || aliveNeighburs >= 4) &&
-          (grid[id].state = false)
-      );
-      // COUNTER +1 EVERY CICLE GENERATION
-      setCounter(counter + 1);
-      return aliveNeighburs;
-    });
+        // APPLIE CONWAY'RULES
+        // SET GRID COPY
+        let gridTemp = [...initialGrid];
+
+        // 1. any live cell with two or three live neighbours survives. any dead cell
+        if (cell.state && (aliveNeighburs === 2 || aliveNeighburs === 3)) {
+          gridTemp[id].state = true;
+        }
+        // 2. with three live neighbours becomes a live cell. all other live cells die
+        if (!cell.state && aliveNeighburs === 3) {
+          gridTemp[id].state = true;
+          setCounter(counter + 1);
+        }
+        // 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead
+        if (cell.state && (aliveNeighburs < 2 || aliveNeighburs >= 4)) {
+          gridTemp[id].state = false;
+        }
+
+        setGrid(gridTemp);
+        return gridTemp;
+      });
+    }
   };
 
   return (
@@ -94,6 +100,7 @@ const ContextProvider = (props) => {
         toggleCellState,
         nextGrid,
         counter,
+        isRunning,
       }}
     >
       {props.children}
