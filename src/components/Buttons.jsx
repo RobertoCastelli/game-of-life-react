@@ -10,14 +10,14 @@ const Buttons = () => {
   const {
     generateRandomGrid,
     clearAllGrid,
-    nextGrid,
+    play,
     counter,
     isRunning,
   } = context;
 
   return (
     <div className="buttons">
-      <button onClick={nextGrid}>{!isRunning ? <FaPlay /> : <FaStop />}</button>
+      <button onClick={play}>{!isRunning ? <FaPlay /> : <FaStop />}</button>
       <button onClick={generateRandomGrid}>
         <GiConwayLifeGlider />
       </button>
