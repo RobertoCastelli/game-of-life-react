@@ -7,13 +7,7 @@ import { DataContext } from "../context";
 
 const Buttons = () => {
   const context = useContext(DataContext);
-  const {
-    generateRandomGrid,
-    clearAllGrid,
-    startGame,
-    counter,
-    isRunning,
-  } = context;
+  const { generateRandomGrid, clearAllGrid, startGame, isRunning } = context;
 
   return (
     <div className="buttons">
@@ -25,9 +19,6 @@ const Buttons = () => {
       </button>
       <button onClick={clearAllGrid}>
         <HiX />
-      </button>
-      <button disabled className="counter">
-        {counter}
       </button>
     </div>
   );

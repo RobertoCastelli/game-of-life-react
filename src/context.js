@@ -19,12 +19,6 @@ const ContextProvider = (props) => {
     setIsRunning(!isRunning);
   };
 
-  useEffect(() => {
-    if (isRunning) {
-      setInterval(nextGrid(), 500);
-    }
-  }, [isRunning, grid, counter]);
-
   //--> CLEAR GRID & COUNTER
   const clearAllGrid = () => {
     setGrid(initialGrid);
@@ -55,47 +49,52 @@ const ContextProvider = (props) => {
     );
   };
 
-  //--> NEXT GENERATION WITH CONWAY'S RULES
-  const nextGrid = () => {
-    grid.map((cell, id) => {
-      // INIT ALIVE NEIGHTBURS COUNT = 0
-      let aliveNeighburs = 0;
-      // EXCLUDE BORDERS
-      if (id >= 21 && id <= 378) {
-        // COUNT ALIVE NEIGHTBORS
-        // [ ↖ ]  [ ↥ ]  [ ↗ ]
-        // [ ↤ ] [INDEX] [ ↦ ]
-        // [ ↙ ]  [ ↧ ]  [ ↘ ]
-        grid[id - 1].state && (aliveNeighburs += 1); //  [ ↤ ]
-        grid[id + 1].state && (aliveNeighburs += 1); //  [ ↦ ]
-        grid[id - 21].state && (aliveNeighburs += 1); // [ ↖ ]
-        grid[id - 19].state && (aliveNeighburs += 1); // [ ↗ ]
-        grid[id - 20].state && (aliveNeighburs += 1); // [ ↥ ]
-        grid[id + 20].state && (aliveNeighburs += 1); // [ ↧ ]
-        grid[id + 19].state && (aliveNeighburs += 1); // [ ↙ ]
-        grid[id + 21].state && (aliveNeighburs += 1); // [ ↘ ]
-      }
-
-      // APPLIE CONWAY'S RULES
-      // SET GRID COPY
-      let gridTemp = [...initialGrid];
-      // 1. any live cell with two or three live neighbours survives. any dead cell
-      if (cell.state && (aliveNeighburs === 2 || aliveNeighburs === 3)) {
-        gridTemp[id].state = true;
-      }
-      // 2. with three live neighbours becomes a live cell. all other live cells die
-      if (!cell.state && aliveNeighburs === 3) {
-        gridTemp[id].state = true;
-        setCounter((counter) => counter + 1);
-      }
-      // 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead
-      if (cell.state && (aliveNeighburs < 2 || aliveNeighburs >= 4)) {
-        gridTemp[id].state = false;
-      }
-      setGrid((g) => (g = gridTemp));
-      return gridTemp;
-    });
+  const handleSelect = (e) => {
+    console.log(e);
   };
+
+  //--> NEXT GENERATION WITH CONWAY'S RULES
+  useEffect(() => {
+    if (isRunning) {
+      grid.map((cell, id) => {
+        // INIT ALIVE NEIGHTBURS COUNT = 0
+        let aliveNeighburs = 0;
+        // EXCLUDE BORDERS
+        if (id >= 21 && id <= 378) {
+          // COUNT ALIVE NEIGHTBORS
+          // [ ↖ ]  [ ↥ ]  [ ↗ ]
+          // [ ↤ ] [INDEX] [ ↦ ]
+          // [ ↙ ]  [ ↧ ]  [ ↘ ]
+          grid[id - 1].state && (aliveNeighburs += 1); //  [ ↤ ]
+          grid[id + 1].state && (aliveNeighburs += 1); //  [ ↦ ]
+          grid[id - 21].state && (aliveNeighburs += 1); // [ ↖ ]
+          grid[id - 19].state && (aliveNeighburs += 1); // [ ↗ ]
+          grid[id - 20].state && (aliveNeighburs += 1); // [ ↥ ]
+          grid[id + 20].state && (aliveNeighburs += 1); // [ ↧ ]
+          grid[id + 19].state && (aliveNeighburs += 1); // [ ↙ ]
+          grid[id + 21].state && (aliveNeighburs += 1); // [ ↘ ]
+        }
+
+        // APPLIE CONWAY'S RULES
+        // SET GRID COPY
+        let gridTemp = [...initialGrid];
+        // 1. any live cell with two or three live neighbours survives. any dead cell
+        if (cell.state && (aliveNeighburs === 2 || aliveNeighburs === 3)) {
+          gridTemp[id].state = true;
+        }
+        // 2. with three live neighbours becomes a live cell. all other live cells die
+        if (!cell.state && aliveNeighburs === 3) {
+          gridTemp[id].state = true;
+          // setCounter((counter) => counter + 1);
+        }
+        // 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead
+        if (cell.state && (aliveNeighburs < 2 || aliveNeighburs >= 4)) {
+          gridTemp[id].state = false;
+        }
+        return setGrid(gridTemp);
+      });
+    }
+  }, [grid, initialGrid, isRunning]);
 
   return (
     <DataContext.Provider
@@ -107,6 +106,7 @@ const ContextProvider = (props) => {
         startGame,
         counter,
         isRunning,
+        handleSelect,
       }}
     >
       {props.children}

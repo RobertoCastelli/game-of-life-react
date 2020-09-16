@@ -4,10 +4,11 @@ import { DataContext } from "../context";
 
 const Grid = () => {
   const context = useContext(DataContext);
-  const { grid, toggleCellState } = context;
+  const { grid, toggleCellState, counter } = context;
 
   return (
     <div className="grid">
+      <div className="counter">{counter}</div>
       <div className="grid-wrapper">
         {grid.map((cell, id) => {
           return (
