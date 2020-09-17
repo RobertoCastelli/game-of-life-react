@@ -51,12 +51,6 @@ button:active {
   transform: scale(1.1);
 }
 
-select {
-  color: cadetblue;
-  padding: 0.5rem;
-  text-transform: uppercase;
-}
-
 .buttons {
   display: flex;
   justify-content: space-evenly;

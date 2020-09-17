@@ -7,13 +7,11 @@ import { DataContext } from "../context";
 
 const Buttons = () => {
   const context = useContext(DataContext);
-  const { generateRandomGrid, clearAllGrid, startGame, isRunning } = context;
+  const { generateRandomGrid, clearAllGrid, runGame, isRunning } = context;
 
   return (
     <div className="buttons">
-      <button onClick={startGame}>
-        {!isRunning ? <FaPlay /> : <FaStop />}
-      </button>
+      <button onClick={runGame}>{!isRunning ? <FaPlay /> : <FaStop />}</button>
       <button onClick={generateRandomGrid}>
         <GiConwayLifeGlider />
       </button>
