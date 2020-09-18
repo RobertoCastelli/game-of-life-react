@@ -44,53 +44,63 @@ const ContextProvider = (props) => {
     );
   };
 
-  //--> START CONWAY'S GAME
-  const runGame = () => {
-    setIsRunning(!isRunning);
-  };
+  //--> START/STOP CONWAY'S GAME
+  const runGame = () => (!isRunning ? setIsRunning(true) : setIsRunning(false));
 
   useEffect(() => {
     if (isRunning) {
-      grid.map((cell, id) => {
-        // INIT ALIVE NEIGHTBURS COUNT = 0
-        let aliveNeighburs = 0;
-        // EXCLUDE BORDERS
-        if (id >= 21 && id <= 378) {
-          // COUNT ALIVE NEIGHTBORS
-          // [ ↖ ]  [ ↥ ]  [ ↗ ]
-          // [ ↤ ] [INDEX] [ ↦ ]
-          // [ ↙ ]  [ ↧ ]  [ ↘ ]
-          grid[id - 1].state && (aliveNeighburs += 1); //  [ ↤ ]
-          grid[id + 1].state && (aliveNeighburs += 1); //  [ ↦ ]
-          grid[id - 21].state && (aliveNeighburs += 1); // [ ↖ ]
-          grid[id - 19].state && (aliveNeighburs += 1); // [ ↗ ]
-          grid[id - 20].state && (aliveNeighburs += 1); // [ ↥ ]
-          grid[id + 20].state && (aliveNeighburs += 1); // [ ↧ ]
-          grid[id + 19].state && (aliveNeighburs += 1); // [ ↙ ]
-          grid[id + 21].state && (aliveNeighburs += 1); // [ ↘ ]
-        }
-
-        // APPLIE CONWAY'S RULES
-        // SET GRID COPY
-        let gridTemp = [...initialGrid];
-        // 1. any live cell with two or three live neighbours survives. any dead cell
-        if (cell.state && (aliveNeighburs === 2 || aliveNeighburs === 3)) {
-          return (gridTemp[id].state = true);
-        }
-        // 2. with three live neighbours becomes a live cell. all other live cells die
-        if (!cell.state && aliveNeighburs === 3) {
-          return (gridTemp[id].state = true);
-          // setCounter(counter + 1);
-        }
-        // 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead
-        if (cell.state && (aliveNeighburs < 2 || aliveNeighburs >= 4)) {
-          return (gridTemp[id].state = false);
-        }
-        setGrid(gridTemp);
-        return grid;
-      });
+      console.log(isRunning);
+      nextGrid();
+    } else {
+      console.log(isRunning);
+      return;
     }
-  });
+    setTimeout(() => {
+      runGame();
+      console.log("ciao");
+    }, 3000);
+  }, [isRunning]);
+
+  const nextGrid = () => {
+    grid.map((cell, id) => {
+      // INIT ALIVE NEIGHTBURS COUNT = 0
+      let aliveNeighburs = 0;
+      // EXCLUDE BORDERS
+      if (id >= 21 && id <= 378) {
+        // COUNT ALIVE NEIGHTBORS
+        // [ ↖ ]  [ ↥ ]  [ ↗ ]
+        // [ ↤ ] [INDEX] [ ↦ ]
+        // [ ↙ ]  [ ↧ ]  [ ↘ ]
+        grid[id - 1].state && (aliveNeighburs += 1); //  [ ↤ ]
+        grid[id + 1].state && (aliveNeighburs += 1); //  [ ↦ ]
+        grid[id - 21].state && (aliveNeighburs += 1); // [ ↖ ]
+        grid[id - 19].state && (aliveNeighburs += 1); // [ ↗ ]
+        grid[id - 20].state && (aliveNeighburs += 1); // [ ↥ ]
+        grid[id + 20].state && (aliveNeighburs += 1); // [ ↧ ]
+        grid[id + 19].state && (aliveNeighburs += 1); // [ ↙ ]
+        grid[id + 21].state && (aliveNeighburs += 1); // [ ↘ ]
+      }
+
+      // SET GRID COPY
+      let gridTemp = [...initialGrid];
+
+      // APPLY CONWAY'S RULES
+      // 1. any live cell with two or three live neighbours survives. any dead cell
+      if (cell.state && (aliveNeighburs === 2 || aliveNeighburs === 3)) {
+        gridTemp[id].state = true;
+      }
+      // 2. with three live neighbours becomes a live cell. all other live cells die
+      if (!cell.state && aliveNeighburs === 3) {
+        gridTemp[id].state = true;
+        // setCounter(counter + 1);
+      }
+      // 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead
+      if (cell.state && (aliveNeighburs < 2 || aliveNeighburs >= 4)) {
+        gridTemp[id].state = false;
+      }
+      return setGrid(gridTemp);
+    });
+  };
 
   //--> NEXT GENERATION WITH CONWAY'S RULES
 
