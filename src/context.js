@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 export const DataContext = React.createContext();
 
@@ -45,25 +45,13 @@ const ContextProvider = (props) => {
   };
 
   //--> START/STOP CONWAY'S GAME
-  const runGame = () => (!isRunning ? setIsRunning(true) : setIsRunning(false));
-
-  useEffect(() => {
-    if (isRunning) {
-      console.log(isRunning);
-      nextGrid();
-    } else {
-      console.log(isRunning);
-      return;
-    }
-    setTimeout(() => {
-      runGame();
-      console.log("ciao");
-    }, 3000);
+  const runGame = useCallback(() => {
+    !isRunning ? setIsRunning(true) : setIsRunning(false);
   }, [isRunning]);
 
-  const nextGrid = () => {
+  const nextGrid = useCallback(() => {
     grid.map((cell, id) => {
-      // INIT ALIVE NEIGHTBURS COUNT = 0
+      // ALIVE NEIGHTBURS COUNT VARIABLE CONTAINER
       let aliveNeighburs = 0;
       // EXCLUDE BORDERS
       if (id >= 21 && id <= 378) {
@@ -81,10 +69,10 @@ const ContextProvider = (props) => {
         grid[id + 21].state && (aliveNeighburs += 1); // [ ↘ ]
       }
 
-      // SET GRID COPY
+      // CREATE INITIAL GRID COPY
       let gridTemp = [...initialGrid];
 
-      // APPLY CONWAY'S RULES
+      // APPLY CONWAY'S RULES ON GRID COPY
       // 1. any live cell with two or three live neighbours survives. any dead cell
       if (cell.state && (aliveNeighburs === 2 || aliveNeighburs === 3)) {
         gridTemp[id].state = true;
@@ -98,9 +86,24 @@ const ContextProvider = (props) => {
       if (cell.state && (aliveNeighburs < 2 || aliveNeighburs >= 4)) {
         gridTemp[id].state = false;
       }
+      // UPDATE GRID
       return setGrid(gridTemp);
     });
-  };
+  }, [isRunning]);
+
+  useEffect(() => {
+    if (isRunning) {
+      console.log(isRunning);
+      nextGrid();
+      let timer = setTimeout(() => {
+        runGame();
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      console.log(isRunning);
+      return;
+    }
+  }, [initialGrid]);
 
   //--> NEXT GENERATION WITH CONWAY'S RULES
 
