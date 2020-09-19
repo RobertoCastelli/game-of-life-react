@@ -131,7 +131,7 @@ const ContextProvider = (props) => {
     if (isRunning) {
       console.log(isRunning);
       nextGrid();
-      setCounter(counter + 1);
+      console.log(grid);
     } else {
       console.log(isRunning);
       return;
