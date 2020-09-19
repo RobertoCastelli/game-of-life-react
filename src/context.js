@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 export const DataContext = React.createContext();
 
@@ -47,7 +47,6 @@ const ContextProvider = (props) => {
   //--> START/STOP CONWAY's GAME
   const runGame = () => (!isRunning ? setIsRunning(true) : setIsRunning(false));
 
-  //--> NEXT GENERATION GRID
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
   ||~~~~~~~~~~~~~~~ CORE MECHANICS ~~~~~~~~~~~~~~~~~||
   ||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||
@@ -116,12 +115,12 @@ const ContextProvider = (props) => {
       // with three live neighbours becomes a live cell. all other live cells die
       if (!cell.state && aliveNeighbours === 3) {
         gridTemp[id].state = true;
+        setCounter(counter + 1);
       }
       // All other live cells die in the next generation. Similarly, all other dead cells stay dead
       if (cell.state && (aliveNeighbours < 2 || aliveNeighbours >= 4)) {
         gridTemp[id].state = false;
       }
-
       // --> 5. UPDATE GRID w/ NEW GRID
       return setGrid(gridTemp);
     });
@@ -130,13 +129,34 @@ const ContextProvider = (props) => {
   useEffect(() => {
     if (isRunning) {
       console.log(isRunning);
-      nextGrid();
-      console.log(grid);
+      let step = () => nextGrid();
+      let interval = setTimeout(step, 1000);
+      return () => clearTimeout(interval);
     } else {
       console.log(isRunning);
       return;
     }
-  }, [isRunning]);
+  }, [isRunning, nextGrid]);
+
+  //   useInterval(nextGrid, initialGrid, isRunning);
+
+  // export const useInterval = (callback, grid, isRunning) => {
+  //   const saveCallback = useRef();
+
+  //   useEffect(() => {
+  //     saveCallback.current = callback;
+  //   }, [callback]);
+
+  //   useEffect(() => {
+  //     if (isRunning) {
+  //       function tick() {
+  //         saveCallback.current();
+  //       }
+  //       let interval = setInterval(tick, 1000);
+  //       return () => clearInterval(interval);
+  //     }
+  //   }, [grid, isRunning]);
+  // };
 
   // --> RENDER
   return (
