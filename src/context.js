@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 export const DataContext = React.createContext();
 
@@ -55,18 +55,21 @@ const ContextProvider = (props) => {
   ||              [ ↤ ] [CELL]  [ ↦ ]
   ||              [ ↙ ]  [ ↧ ]  [ ↘ ]
   ||
-  ||  1. COUNT ALIVE NEIGHBOURS FOR EVERY CELL      ||
-  ||     TAKING CARE OF BORDERS                     ||
-  ||  2. CREATE A NEW GRID FROM PREVIOUS GRID       ||
+  ||  1. CREATE A NEW GRID FROM PREVIOUS GRID       ||
+  ||  2. COUNT ALIVE NEIGHBOURS FOR EVERY CELL      ||
+  ||     (optional -> implement infinite border)    ||
   ||  3. APPLY CONWAY's RULES FOR EVERY CELL        ||
   ||  4. POPULATE NEW GRID w/ DEAD/ALIVE CELLS      ||
   ||  5. UPDATE PREVIOUS GRID w/ NEW GRID           ||
   ||  6. RINSE AND REPEAT (care for infinite loops) ||
   ||                                                ||  
   \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-  const nextGrid = () => {
+  const nextGrid = useCallback(() => {
+    //--> 1. CREATE NEW GRID
+    let gridTemp = [...initialGrid];
+
+    //--> 2. COUNT ALIVE NEIGHBOURS FOR EVERY CELL
     grid.map((cell, id) => {
-      //--> 1. COUNT ALIVE NEIGHBOURS FOR EVERY CELL
       // ALIVE NEIGHBOURS INIT
       let aliveNeighbours = 0;
 
@@ -104,9 +107,6 @@ const ContextProvider = (props) => {
         grid[id - 379].state && (aliveNeighbours += 1); // [ ↘ ] <-< infinite borders
       }
 
-      //--> 2. CREATE NEW EMPTY GRID
-      let gridTemp = [...initialGrid];
-
       //--> 3. & 4. APPLY CONWAY's RULES & POPULATE NEW GRID
       // any live cell with two or three live neighbours survives. any dead cell
       if (cell.state && (aliveNeighbours === 2 || aliveNeighbours === 3)) {
@@ -115,50 +115,31 @@ const ContextProvider = (props) => {
       // with three live neighbours becomes a live cell. all other live cells die
       if (!cell.state && aliveNeighbours === 3) {
         gridTemp[id].state = true;
+        // INCREMENT COUNTER SINCE A NEW STE
         setCounter(counter + 1);
       }
       // All other live cells die in the next generation. Similarly, all other dead cells stay dead
       if (cell.state && (aliveNeighbours < 2 || aliveNeighbours >= 4)) {
         gridTemp[id].state = false;
       }
-      // --> 5. UPDATE GRID w/ NEW GRID
-      return setGrid(gridTemp);
+      return cell;
     });
-  };
+    // --> 5. UPDATE GRID w/ NEW GRID
+    setGrid(gridTemp);
+  }, [counter, grid, initialGrid]);
 
+  //--> 6. RINSE AND REPEAT
   useEffect(() => {
     if (isRunning) {
-      console.log(isRunning);
       let step = () => nextGrid();
-      let interval = setTimeout(step, 1000);
-      return () => clearTimeout(interval);
+      let timer = setTimeout(step, 100);
+      return () => clearTimeout(timer);
     } else {
-      console.log(isRunning);
       return;
     }
   }, [isRunning, nextGrid]);
 
-  //   useInterval(nextGrid, initialGrid, isRunning);
-
-  // export const useInterval = (callback, grid, isRunning) => {
-  //   const saveCallback = useRef();
-
-  //   useEffect(() => {
-  //     saveCallback.current = callback;
-  //   }, [callback]);
-
-  //   useEffect(() => {
-  //     if (isRunning) {
-  //       function tick() {
-  //         saveCallback.current();
-  //       }
-  //       let interval = setInterval(tick, 1000);
-  //       return () => clearInterval(interval);
-  //     }
-  //   }, [grid, isRunning]);
-  // };
-
-  // --> RENDER
+  //--> RENDER
   return (
     <DataContext.Provider
       value={{

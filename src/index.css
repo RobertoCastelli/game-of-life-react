@@ -103,7 +103,7 @@ button:active {
   color: cadetblue;
   margin: 1rem auto;
   width: 1rem;
-  padding: 1rem;
+  padding: 0.5rem;
   cursor: default;
   min-width: 50px;
 }
