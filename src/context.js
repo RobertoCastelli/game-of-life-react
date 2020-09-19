@@ -39,6 +39,7 @@ const ContextProvider = (props) => {
         if (index === id) {
           cell.state = !cell.state;
         }
+        console.log(index);
         return cellState;
       })
     );
@@ -49,18 +50,43 @@ const ContextProvider = (props) => {
     !isRunning ? setIsRunning(true) : setIsRunning(false);
   }, [isRunning]);
 
+  //--> NEXT GENERATION GRID
   const nextGrid = useCallback(() => {
     grid.map((cell, id) => {
       // ALIVE NEIGHTBURS COUNT VARIABLE CONTAINER
       let aliveNeighburs = 0;
-      // EXCLUDE BORDERS
-      if (id >= 21 && id <= 378) {
-        // COUNT ALIVE NEIGHTBORS
-        // [ ↖ ]  [ ↥ ]  [ ↗ ]
-        // [ ↤ ] [INDEX] [ ↦ ]
-        // [ ↙ ]  [ ↧ ]  [ ↘ ]
-        grid[id - 1].state && (aliveNeighburs += 1); //  [ ↤ ]
-        grid[id + 1].state && (aliveNeighburs += 1); //  [ ↦ ]
+
+      // COUNT ALIVE NEIGHTBORS
+      // [ ↖ ]  [ ↥ ]  [ ↗ ]
+      // [ ↤ ] [INDEX] [ ↦ ]
+      // [ ↙ ]  [ ↧ ]  [ ↘ ]
+
+      // INFINITE GRID EFFECT TOP BORDER (optional)
+      if (id >= 1 && id <= 18) {
+        grid[id - 1].state && (aliveNeighburs += 1); // [ ↤ ]
+        grid[id + 1].state && (aliveNeighburs += 1); // [ ↦ ]
+        grid[id + 379].state && (aliveNeighburs += 1); // [ ↖ ]*
+        grid[id + 381].state && (aliveNeighburs += 1); // [ ↗ ]*
+        grid[id + 380].state && (aliveNeighburs += 1); // [ ↥ ]*
+        grid[id + 20].state && (aliveNeighburs += 1); // [ ↧ ]
+        grid[id + 19].state && (aliveNeighburs += 1); // [ ↙ ]
+        grid[id + 21].state && (aliveNeighburs += 1); // [ ↘ ]
+
+        // INFINITE GRID EFFECT BOTTOM BORDER (optional)
+      } else if (id >= 381 && id <= 398) {
+        grid[id - 1].state && (aliveNeighburs += 1); // [ ↤ ]
+        grid[id + 1].state && (aliveNeighburs += 1); // [ ↦ ]
+        grid[id - 21].state && (aliveNeighburs += 1); // [ ↖ ]
+        grid[id - 19].state && (aliveNeighburs += 1); // [ ↗ ]
+        grid[id - 20].state && (aliveNeighburs += 1); // [ ↥ ]
+        grid[id - 380].state && (aliveNeighburs += 1); // [ ↧ ]*
+        grid[id - 381].state && (aliveNeighburs += 1); // [ ↙ ]*
+        grid[id - 379].state && (aliveNeighburs += 1); // [ ↘ ]*
+
+        // MID GRID (!important)
+      } else if (id >= 21 && id <= 378) {
+        grid[id - 1].state && (aliveNeighburs += 1); // [ ↤ ]
+        grid[id + 1].state && (aliveNeighburs += 1); // [ ↦ ]
         grid[id - 21].state && (aliveNeighburs += 1); // [ ↖ ]
         grid[id - 19].state && (aliveNeighburs += 1); // [ ↗ ]
         grid[id - 20].state && (aliveNeighburs += 1); // [ ↥ ]
@@ -89,64 +115,18 @@ const ContextProvider = (props) => {
       // UPDATE GRID
       return setGrid(gridTemp);
     });
-  }, [isRunning]);
+  }, [initialGrid, grid]);
 
   useEffect(() => {
     if (isRunning) {
       console.log(isRunning);
       nextGrid();
-      let timer = setTimeout(() => {
-        runGame();
-      }, 1000);
-      return () => clearTimeout(timer);
     } else {
       console.log(isRunning);
+
       return;
     }
-  }, [initialGrid]);
-
-  //--> NEXT GENERATION WITH CONWAY'S RULES
-
-  // const nextGrid = () => {
-  //   grid.map((cell, id) => {
-  //     // INIT ALIVE NEIGHTBURS COUNT = 0
-  //     let aliveNeighburs = 0;
-  //     // EXCLUDE BORDERS
-  //     if (id >= 21 && id <= 378) {
-  //       // COUNT ALIVE NEIGHTBORS
-  //       // [ ↖ ]  [ ↥ ]  [ ↗ ]
-  //       // [ ↤ ] [INDEX] [ ↦ ]
-  //       // [ ↙ ]  [ ↧ ]  [ ↘ ]
-  //       grid[id - 1].state && (aliveNeighburs += 1); //  [ ↤ ]
-  //       grid[id + 1].state && (aliveNeighburs += 1); //  [ ↦ ]
-  //       grid[id - 21].state && (aliveNeighburs += 1); // [ ↖ ]
-  //       grid[id - 19].state && (aliveNeighburs += 1); // [ ↗ ]
-  //       grid[id - 20].state && (aliveNeighburs += 1); // [ ↥ ]
-  //       grid[id + 20].state && (aliveNeighburs += 1); // [ ↧ ]
-  //       grid[id + 19].state && (aliveNeighburs += 1); // [ ↙ ]
-  //       grid[id + 21].state && (aliveNeighburs += 1); // [ ↘ ]
-  //     }
-
-  //     // APPLIE CONWAY'S RULES
-  //     // SET GRID COPY
-  //     let gridTemp = [...initialGrid];
-  //     // 1. any live cell with two or three live neighbours survives. any dead cell
-  //     if (cell.state && (aliveNeighburs === 2 || aliveNeighburs === 3)) {
-  //       gridTemp[id].state = true;
-  //     }
-  //     // 2. with three live neighbours becomes a live cell. all other live cells die
-  //     if (!cell.state && aliveNeighburs === 3) {
-  //       gridTemp[id].state = true;
-  //       // setCounter(counter + 1);
-  //     }
-  //     // 3. All other live cells die in the next generation. Similarly, all other dead cells stay dead
-  //     if (cell.state && (aliveNeighburs < 2 || aliveNeighburs >= 4)) {
-  //       gridTemp[id].state = false;
-  //     }
-  //     setGrid(gridTemp);
-  //     return gridTemp;
-  //   });
-  // };
+  }, [isRunning, nextGrid]);
 
   return (
     <DataContext.Provider
