@@ -82,8 +82,8 @@ button:active {
 
 .grid-cell {
   border: 1px solid rgb(95, 158, 160, 0.5);
-  border-radius: 50%; /* <-- comment to make cirles cells*/
-  transition: all 0.2s ease;
+  border-radius: 50%; /* <-- 0% to make square cells*/
+  transition: all 0.4s ease;
 }
 
 .grid-cell:hover {
