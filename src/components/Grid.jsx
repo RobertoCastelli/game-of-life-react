@@ -19,7 +19,7 @@ const Grid = () => {
               onClick={() => toggleCellState(id)}
               style={
                 cell.state
-                  ? { backgroundColor: "cadetblue" }
+                  ? { backgroundColor: "#88D500" }
                   : { backgroundColor: "white" }
               }
             ></div>

@@ -141,3 +141,7 @@ label {
   cursor: default;
   min-width: 50px;
 }
+
+.coloring {
+  background-color: chartreuse !important;
+}

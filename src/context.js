@@ -13,15 +13,10 @@ const ContextProvider = (props) => {
   const [cellState, setCellState] = useState(false); // UPDATE CELL STATE (DEAD/ALIVE)
   const [counter, setCounter] = useState(0); // UPDATE COUNTER
   const [isRunning, setIsRunning] = useState(false); // UPDATE IF GAME IS RUNNING
-  const [speed, setSpeed] = useState(100); // UPDATE SLIDER SPEED VALUE
+  const [speed, setSpeed] = useState(500); // UPDATE SLIDER SPEED VALUE
 
-  //--> RESET GRID, COUNTER, SPEED & STOP RUNNING SIMULATION
-  const clearAllGrid = () => {
-    setGrid(initialGrid);
-    setCounter(0);
-    setIsRunning(false);
-    setSpeed(100);
-  };
+  //--> RESET GAME
+  const clearAllGrid = (e) => window.location.reload();
 
   //--> GENERATE RANDOM CELLS FOR THE LAZY BASTARDS :)
   const generateRandomCells = () => {
@@ -29,6 +24,7 @@ const ContextProvider = (props) => {
       grid.map(() => {
         return {
           state: Math.random() < 0.5,
+          color: "white",
         };
       })
     );
@@ -181,17 +177,19 @@ const ContextProvider = (props) => {
       // any live cell with two or three live neighbours survives. any dead cell
       if (cell.state && (aliveNeighbours === 2 || aliveNeighbours === 3)) {
         gridTemp[id].state = true;
+        document.getElementById(id).style.opacity = "0.5";
       }
       // with three live neighbours becomes a live cell. all other live cells die
       if (!cell.state && aliveNeighbours === 3) {
         gridTemp[id].state = true;
         // INCREMENT COUNTER
         setCounter(counter + 1);
-        cell.color = "red";
+        document.getElementById(id).style.opacity = "1";
       }
       // All other live cells die in the next generation. Similarly, all other dead cells stay dead
       if (cell.state && (aliveNeighbours < 2 || aliveNeighbours >= 4)) {
         gridTemp[id].state = false;
+        document.getElementById(id).style.opacity = "1";
       }
       return cell;
     });
