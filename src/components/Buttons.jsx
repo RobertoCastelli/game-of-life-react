@@ -2,22 +2,50 @@ import React, { useContext } from "react";
 import { FaPlay } from "react-icons/fa";
 import { FaStop } from "react-icons/fa";
 import { GiConwayLifeGlider } from "react-icons/gi";
-import { HiX } from "react-icons/hi";
+import { MdReplay } from "react-icons/md";
+import { BiShapeTriangle } from "react-icons/bi";
 import { DataContext } from "../context";
 
 const Buttons = () => {
   const context = useContext(DataContext);
-  const { generateRandomGrid, clearAllGrid, runGame, isRunning } = context;
+  const {
+    generateRandomCells,
+    generatePulsar,
+    clearAllGrid,
+    runGame,
+    isRunning,
+    handleSpeed,
+    speed,
+  } = context;
 
   return (
-    <div className="buttons">
-      <button onClick={runGame}>{!isRunning ? <FaPlay /> : <FaStop />}</button>
-      <button onClick={generateRandomGrid}>
-        <GiConwayLifeGlider />
-      </button>
-      <button onClick={clearAllGrid}>
-        <HiX />
-      </button>
+    <div className="controlPanel">
+      <div className="buttons">
+        <button onClick={runGame}>
+          {!isRunning ? <FaPlay size={20} /> : <FaStop size={20} />}
+        </button>
+        <button onClick={generateRandomCells}>
+          <GiConwayLifeGlider size={20} />
+        </button>
+        <button onClick={generatePulsar}>
+          <BiShapeTriangle size={20} />
+        </button>
+        <button onClick={clearAllGrid}>
+          <MdReplay size={20} />
+        </button>
+      </div>
+      <div className="slider">
+        <label htmlFor="speed">{speed} ms</label>
+        <input
+          name="speed"
+          type="range"
+          min="100"
+          max="1000"
+          step="100"
+          value={speed}
+          onChange={(e) => handleSpeed(e.target.value)}
+        />
+      </div>
     </div>
   );
 };

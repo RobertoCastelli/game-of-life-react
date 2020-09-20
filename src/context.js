@@ -13,21 +13,86 @@ const ContextProvider = (props) => {
   const [cellState, setCellState] = useState(false); // UPDATE CELL STATE (DEAD/ALIVE)
   const [counter, setCounter] = useState(0); // UPDATE COUNTER
   const [isRunning, setIsRunning] = useState(false); // UPDATE IF GAME IS RUNNING
+  const [speed, setSpeed] = useState(100); // UPDATE SLIDER SPEED VALUE
 
-  //--> CLEAR GRID, COUNTER & STOP RUNNING SIMULATION
+  //--> RESET GRID, COUNTER, SPEED & STOP RUNNING SIMULATION
   const clearAllGrid = () => {
     setGrid(initialGrid);
     setCounter(0);
     setIsRunning(false);
+    setSpeed(100);
   };
 
-  //--> GENERATE A RANDOM GRID FOR THE LAZY BASTARDS :)
-  const generateRandomGrid = () => {
+  //--> GENERATE RANDOM CELLS FOR THE LAZY BASTARDS :)
+  const generateRandomCells = () => {
     setGrid(
       grid.map(() => {
         return {
           state: Math.random() < 0.5,
         };
+      })
+    );
+  };
+
+  //--> GENERATE PULSAR TO SHOW OFF (optional)
+  const generatePulsar = () => {
+    setCellState(
+      grid.map((cell, id) => {
+        [
+          248,
+          268,
+          288,
+          250,
+          270,
+          290,
+          168,
+          148,
+          128,
+          170,
+          150,
+          130,
+          191,
+          192,
+          193,
+          231,
+          232,
+          233,
+          227,
+          226,
+          225,
+          187,
+          186,
+          185,
+          91,
+          92,
+          93,
+          87,
+          86,
+          85,
+          327,
+          326,
+          325,
+          331,
+          332,
+          333,
+          255,
+          275,
+          295,
+          175,
+          295,
+          175,
+          155,
+          135,
+          123,
+          143,
+          163,
+          243,
+          263,
+          283,
+        ].includes(id)
+          ? (cell.state = true)
+          : (cell.state = false);
+        return cellState;
       })
     );
   };
@@ -39,22 +104,26 @@ const ContextProvider = (props) => {
         if (index === id) {
           cell.state = !cell.state;
         }
+        console.log(index);
         return cellState;
       })
     );
   };
 
+  //--> TOGGLE MUTATION SPEED
+  const handleSpeed = (e) => setSpeed(e);
+
   //--> START/STOP CONWAY's GAME
   const runGame = () => (!isRunning ? setIsRunning(true) : setIsRunning(false));
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
-  ||~~~~~~~~~~~~~~~ CORE MECHANICS ~~~~~~~~~~~~~~~~~||
-  ||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||
-  ||                                                ||
+  ||~~~~~~~~~~~~~~~| CORE MECHANICS |~~~~~~~~~~~~~~~||
+  ||~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~||                              
+  ||
   ||              [ ↖ ]  [ ↥ ]  [ ↗ ]
   ||              [ ↤ ] [CELL]  [ ↦ ]
   ||              [ ↙ ]  [ ↧ ]  [ ↘ ]
-  ||
+  ||                                                ||
   ||  1. CREATE A NEW GRID FROM PREVIOUS GRID       ||
   ||  2. COUNT ALIVE NEIGHBOURS FOR EVERY CELL      ||
   ||     (optional -> implement infinite border)    ||
@@ -64,6 +133,7 @@ const ContextProvider = (props) => {
   ||  6. RINSE AND REPEAT (care for infinite loops) ||
   ||                                                ||  
   \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
   const nextGrid = useCallback(() => {
     //--> 1. CREATE NEW GRID
     let gridTemp = [...initialGrid];
@@ -115,8 +185,9 @@ const ContextProvider = (props) => {
       // with three live neighbours becomes a live cell. all other live cells die
       if (!cell.state && aliveNeighbours === 3) {
         gridTemp[id].state = true;
-        // INCREMENT COUNTER SINCE A NEW STE
+        // INCREMENT COUNTER
         setCounter(counter + 1);
+        cell.color = "red";
       }
       // All other live cells die in the next generation. Similarly, all other dead cells stay dead
       if (cell.state && (aliveNeighbours < 2 || aliveNeighbours >= 4)) {
@@ -132,24 +203,27 @@ const ContextProvider = (props) => {
   useEffect(() => {
     if (isRunning) {
       let step = () => nextGrid();
-      let timer = setTimeout(step, 100);
+      let timer = setTimeout(step, speed);
       return () => clearTimeout(timer);
     } else {
       return;
     }
-  }, [isRunning, nextGrid]);
+  }, [isRunning, nextGrid, speed]);
 
   //--> RENDER
   return (
     <DataContext.Provider
       value={{
         grid,
-        generateRandomGrid,
+        generateRandomCells,
+        generatePulsar,
         clearAllGrid,
         toggleCellState,
         runGame,
         counter,
         isRunning,
+        speed,
+        handleSpeed,
       }}
     >
       {props.children}

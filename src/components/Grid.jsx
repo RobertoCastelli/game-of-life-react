@@ -5,6 +5,7 @@ import { DataContext } from "../context";
 const Grid = () => {
   const context = useContext(DataContext);
   const { grid, toggleCellState, counter } = context;
+
   return (
     <div className="grid">
       <div className="counter">{counter}</div>
