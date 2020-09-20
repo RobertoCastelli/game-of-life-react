@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  color: #333333;
-  background-color: #f4f4f4;
+  color: rgb(51, 51, 51);
+  background-color: rgb(244, 244, 244);
   letter-spacing: 0.08rem;
   font-size: 0.8rem;
   font-family: "Ubuntu", sans-serif;
@@ -35,14 +35,14 @@ button {
   margin: 0.1rem;
   outline: none;
   transition: all 0.2s linear;
-  color: white;
-  background-color: cadetblue;
-  border: 1px solid cadetblue;
+  color: rgb(255, 255, 255);
+  background-color: rgb(95, 158, 160);
+  border: 1px solid rgb(95, 158, 160);
 }
 
 button:hover {
-  color: cadetblue;
-  background-color: white;
+  color: rgb(95, 158, 160);
+  background-color: rgb(255, 255, 255);
 }
 
 button:active {
@@ -60,7 +60,7 @@ input[type="range"] {
   appearance: none;
   width: 200px;
   height: 10px;
-  border: 1px solid cadetblue;
+  border: 1px solid rgb(95, 158, 160);
   border-radius: 1rem;
   outline: none;
 }
@@ -76,7 +76,7 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 50%;
   width: 15px;
   height: 15px;
-  background: cadetblue;
+  background: rgb(95, 158, 160);
   cursor: ew-resize;
 }
 
@@ -105,7 +105,7 @@ label {
 
 .grid-wrapper {
   position: relative;
-  outline: 2px ridge #5f9ea0;
+  outline: 2px ridge rgb(95, 158, 160);
   display: grid;
   grid-template-columns: repeat(20, 1fr);
   grid-template-rows: repeat(20, 1fr);
@@ -123,7 +123,7 @@ label {
 .grid-cell:hover {
   cursor: pointer;
   transform: scale(1.2);
-  border: 1px solid orangered;
+  border: 1px solid rgb(255, 69, 0);
   opacity: 1;
 }
 
@@ -132,9 +132,9 @@ label {
 }
 
 .counter {
-  background-color: white;
-  outline: 1px solid cadetblue;
-  color: cadetblue;
+  background-color: rgb(255, 255, 255);
+  outline: 1px solid rgb(95, 158, 160);
+  color: rgb(95, 158, 160);
   margin: 1rem auto;
   width: 1rem;
   padding: 0.5rem;
@@ -142,6 +142,27 @@ label {
   min-width: 50px;
 }
 
-.coloring {
-  background-color: chartreuse !important;
+.rules-born,
+.rules-survived,
+.rules-dead {
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid rgb(51, 51, 51);
+  margin: 0.1rem;
+}
+
+.rules-born {
+  background-color: rgb(136, 213, 0);
+}
+
+.rules-survived {
+  background-color: rgba(136, 213, 0);
+}
+
+.legenda {
+  list-style: none;
+  display: grid;
+  padding: 0;
 }

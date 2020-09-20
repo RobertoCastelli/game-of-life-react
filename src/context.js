@@ -13,7 +13,8 @@ const ContextProvider = (props) => {
   const [cellState, setCellState] = useState(false); // UPDATE CELL STATE (DEAD/ALIVE)
   const [counter, setCounter] = useState(0); // UPDATE COUNTER
   const [isRunning, setIsRunning] = useState(false); // UPDATE IF GAME IS RUNNING
-  const [speed, setSpeed] = useState(500); // UPDATE SLIDER SPEED VALUE
+  const [speed, setSpeed] = useState(100); // UPDATE SLIDER SPEED VALUE
+  const [cellColor, setCellColor] = useState("#88d500");
 
   //--> RESET GAME
   const clearAllGrid = (e) => window.location.reload();
@@ -24,7 +25,6 @@ const ContextProvider = (props) => {
       grid.map(() => {
         return {
           state: Math.random() < 0.5,
-          color: "white",
         };
       })
     );
@@ -100,7 +100,6 @@ const ContextProvider = (props) => {
         if (index === id) {
           cell.state = !cell.state;
         }
-        console.log(index);
         return cellState;
       })
     );
@@ -108,6 +107,9 @@ const ContextProvider = (props) => {
 
   //--> TOGGLE MUTATION SPEED
   const handleSpeed = (e) => setSpeed(e);
+
+  //--> PICK CELL COLOR FROM COLOR-PICKER
+  const handleCellColor = (e) => setCellColor(e);
 
   //--> START/STOP CONWAY's GAME
   const runGame = () => (!isRunning ? setIsRunning(true) : setIsRunning(false));
@@ -222,6 +224,8 @@ const ContextProvider = (props) => {
         isRunning,
         speed,
         handleSpeed,
+        cellColor,
+        handleCellColor,
       }}
     >
       {props.children}

@@ -16,6 +16,8 @@ const Buttons = () => {
     isRunning,
     handleSpeed,
     speed,
+    cellColor,
+    handleCellColor,
   } = context;
 
   return (
@@ -44,6 +46,13 @@ const Buttons = () => {
           step="100"
           value={speed}
           onChange={(e) => handleSpeed(e.target.value)}
+        />
+      </div>
+      <div>
+        <input
+          type="color"
+          value={cellColor}
+          onChange={(e) => handleCellColor(e.target.value)}
         />
       </div>
     </div>
